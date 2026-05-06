@@ -1,4 +1,4 @@
-# Trabalho de Redes de Computadores: Uma Análise Comparativa entre HTTP/1.1 e HTTP/3
+# Trabalho de Redes de Computadores
 ### Integrantes:
 Guilherme Dornelles Guarienti Millani (2510200473) – Líder
 Iago Leão Silveira de Souza (2010200689)
