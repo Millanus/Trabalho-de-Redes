@@ -1,6 +1,7 @@
 # Trabalho de Redes de Computadores
 ### Integrantes:
 Guilherme Dornelles Guarienti Millani (2510200473) – Líder
+
 Iago Leão Silveira de Souza (2010200689)
 ### 1. Introdução
 O protocolo HTTP (Hypertext Transfer Protocol) é a base da World Wide Web, permitindo a comunicação entre clientes e servidores. Com o crescimento das aplicações web, que passaram a exigir maior velocidade e segurança, tornou-se necessário evoluir os protocolos de comunicação para suportar conexões mais eficientes e criptografadas.
