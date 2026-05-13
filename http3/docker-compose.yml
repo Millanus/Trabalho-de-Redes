@@ -1,0 +1,9 @@
+services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy-http3
+    ports:
+      - "443:443/tcp"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
