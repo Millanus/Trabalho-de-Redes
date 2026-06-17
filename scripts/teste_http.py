@@ -20,7 +20,7 @@ for i in range(NUM_TESTES):
 
     resultados.append([i + 1, tempo_resposta])
 
-with open("../resultados/resultados_http.csv", "w", newline="") as arquivo:
+with open("resultados/resultados_http.csv", "w", newline="") as arquivo:
     writer = csv.writer(arquivo)
 
     writer.writerow(["Teste", "TempoResposta_ms"])
