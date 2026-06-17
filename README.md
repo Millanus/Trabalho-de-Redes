@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Trabalho de Redes de Computadores
 ### Integrantes:
 Guilherme Dornelles Guarienti Millani (2510200473) – Líder
@@ -11,3 +12,37 @@ Com isso, o HTTP/1.1 apresenta limitações de desempenho, como o problema de bl
 Este trabalho propõe uma análise comparativa entre os protocolos HTTP/1.1 e HTTP/3. A proposta é medir métricas como latência (RTT) e tempo de carregamento de páginas (Page Load Time) em um ambiente controlado, simulando diferentes condições de rede, como atraso e perda de pacotes, para avaliar os ganhos de desempenho do HTTP/3.
 
 Para isso, serão utilizadas tecnologias como Docker, para a criação de ambientes isolados e reprodutíveis, e ferramentas de controle de rede como o tc (Traffic Control), permitindo a simulação de diferentes condições de rede. A coleta de dados será realizada por meio de scripts em Python, utilizando bibliotecas compatíveis com QUIC e a biblioteca padrão socket para conexões HTTP/1.1, garantindo a repetibilidade dos experimentos. Além disso, serão empregados o Wireshark para análise detalhada do tráfego de rede e o Mininet para a emulação de topologias de rede controladas, possibilitando a observação do comportamento dos protocolos em diferentes cenários.
+=======
+# Comparação de desempenho HTTP/1.1 e HTTP/3
+
+Trabalho da disciplina de Redes de Computadores.
+
+## Objetivo
+
+Avaliar o desempenho dos protocolos HTTP/1.1 e HTTP/3 em diferentes condições de rede.
+
+## Tecnologias
+
+- Docker
+- Caddy Server
+- Python
+- aioquic
+- tc netem
+- Wireshark
+
+## Cenários
+
+| Cenário | Latência | Perda |
+|-|-|-|
+| A | 0ms | 0% |
+| B | 50ms | 0% |
+| C | 100ms | 1% |
+| D | 200ms | 5% |
+
+## Estrutura
+
+- scripts: códigos de teste
+- resultados: dados coletados
+- captures: capturas Wireshark
+- http3: configuração Caddy HTTP/3
+>>>>>>> Organozação Inicial e validacao HTTP1 HTTP3
