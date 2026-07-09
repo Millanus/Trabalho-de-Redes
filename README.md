@@ -139,7 +139,7 @@ Figura 1 — Inicialização do servidor HTTP/1.1 (porta 8000).
 
 
 <img width="902" height="609" alt="FIGURA 2" src="https://github.com/user-attachments/assets/f57e66a8-3ed0-4e96-a6c3-06eaa1a33cb2" />
-- Figura 2 — Inicialização do ambiente HTTP/3 via Docker Compose (servidor Caddy)
+Figura 2 — Inicialização do ambiente HTTP/3 via Docker Compose (servidor Caddy)
 
 ### 4.2 Testes básicos de latência (Cenário A — Baseline)
 
@@ -147,11 +147,11 @@ Os testes iniciais em ambiente local sem degradação de rede (Cenário A) resul
 
 
 <img width="905" height="373" alt="FIGURA 3" src="https://github.com/user-attachments/assets/b4cc17a2-5ef6-47f9-81a4-dcf3dfbed8fa" />
-      - Figura 3 — Execução do cliente HTTP/1.1 e coleta das métricas (Cenário A)
+Figura 3 — Execução do cliente HTTP/1.1 e coleta das métricas (Cenário A)
 
 
 <img width="1402" height="347" alt="FIGURA 4" src="https://github.com/user-attachments/assets/b3fd68de-037b-49f2-9208-3a740afd57e0" />
-     - Figura 4 — Execução do cliente HTTP/3 (aioquic) e coleta das métricas (Cenário A)
+Figura 4 — Execução do cliente HTTP/3 (aioquic) e coleta das métricas (Cenário A)
 
 ### 4.3 Teste preliminar com perda de pacotes
 
@@ -160,7 +160,7 @@ Foi realizado um teste preliminar utilizando HTTP/1.1 em ambiente controlado, co
 
 
 <img width="1283" height="702" alt="FIGURA 5" src="https://github.com/user-attachments/assets/9a7a275b-7dfa-4e7e-b12e-4a10d506857b" />
-- Figura 5 — Teste HTTP/1.1 com 100 ms de latência e 1% de perda de pacotes (tc netem)
+Figura 5 — Teste HTTP/1.1 com 100 ms de latência e 1% de perda de pacotes (tc netem)
 
 ### 4.4 Validação inicial do ambiente HTTP/3
 
@@ -169,15 +169,15 @@ Foi realizada a configuração inicial do ambiente HTTP/3 utilizando o servidor 
 
 
 <img width="1284" height="359" alt="FIGURA 6" src="https://github.com/user-attachments/assets/e50946de-8d8c-4fa3-a9e3-efa504382f4d" />
-- Figura 6 — Container Caddy em execução, com a porta 443 exposta em TCP e UDP
+Figura 6 — Container Caddy em execução, com a porta 443 exposta em TCP e UDP
 
 
 <img width="1125" height="731" alt="FIGURA 7" src="https://github.com/user-attachments/assets/c165c823-2e7e-4d56-96fe-a0962788441d" />
-- Figura 7 — Logs do servidor Caddy demonstrando a habilitação do HTTP/3 (QUIC) e suporte aos protocolos h1, h2 e h3
+Figura 7 — Logs do servidor Caddy demonstrando a habilitação do HTTP/3 (QUIC) e suporte aos protocolos h1, h2 e h3
 
 
 <img width="1530" height="195" alt="FIGURA 8" src="https://github.com/user-attachments/assets/8e3f221f-3403-48b3-a6a8-05aeb0b63399" />
-- Figura 8 — Conexão HTTP/3 estabelecida com sucesso pelo cliente experimental em Python (aioquic)
+Figura 8 — Conexão HTTP/3 estabelecida com sucesso pelo cliente experimental em Python (aioquic)
 
 Durante o desenvolvimento, também foram registradas falhas pontuais de conexão (`ConnectionError`) no cliente HTTP/3, posteriormente contornadas, o que evidencia a maior complexidade de implementação do QUIC em comparação ao modelo cliente-servidor tradicional do HTTP/1.1.
 
@@ -188,10 +188,10 @@ O tráfego HTTP/1.1 foi capturado na interface de loopback, filtrado pela porta 
 
 
 <img width="789" height="611" alt="FIGURA 9" src="https://github.com/user-attachments/assets/847f7e7e-006e-4246-9960-a2572288428a" />
-- Figura 9 — Captura de tráfego HTTP/1.1 (TCP, porta 8000)
+Figura 9 — Captura de tráfego HTTP/1.1 (TCP, porta 8000)
 
 <img width="788" height="615" alt="FIGURA 10" src="https://github.com/user-attachments/assets/d4695c58-f8bb-4b23-a7d5-617faee3a92a" />
-- Figura 10 — Captura de tráfego HTTP/3 (QUIC sobre UDP, porta 443)
+Figura 10 — Captura de tráfego HTTP/3 (QUIC sobre UDP, porta 443)
 
 ---
 
