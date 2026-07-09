@@ -135,7 +135,7 @@ Foram desenvolvidos dois scripts independentes: um para o protocolo HTTP/1.1 (us
 O servidor HTTP/1.1 foi inicializado localmente na porta 8000 utilizando o módulo `http.server` do Python, enquanto o servidor HTTP/3 foi inicializado via Docker, utilizando o Caddy Server com suporte nativo a QUIC na porta 443
 
 <img width="1207" height="457" alt="Figura 1" src="https://github.com/user-attachments/assets/ae230b31-54ef-4770-aed3-46d6919e910e" />
-- *Figura 1 — Inicialização do servidor HTTP/1.1 (porta 8000).*
+Figura 1 — Inicialização do servidor HTTP/1.1 (porta 8000).
 
 
 <img width="902" height="609" alt="FIGURA 2" src="https://github.com/user-attachments/assets/f57e66a8-3ed0-4e96-a6c3-06eaa1a33cb2" />
