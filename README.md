@@ -1,339 +1,257 @@
-<<<<<<< HEAD
-# Trabalho de Redes de Computadores
+# Comparação de Desempenho entre HTTP/1.1 e HTTP/3 em Ambiente Hospitalar Simulado
 
-> **Análise Comparativa entre HTTP/1.1 e HTTP/3 em Diferentes Condições de Rede**
-
-**Professor:** *(Adicionar link do trabalho aqui)*
+Trabalho da disciplina de Redes de Computadores, propondo uma análise comparativa entre os protocolos **HTTP/1.1** e **HTTP/3**, com foco em métricas de latência, jitter e estabilidade de conexão em cenários inspirados em uma rede hospitalar.
 
 ## Integrantes
 
-- **Guilherme Dornelles Guarienti Millani** (2510200473) — Líder
-- **Iago Leão Silveira de Souza** (2010200689)
+- Guilherme Dornelles Guarienti Millani (2510200473) – Líder
+- Iago Leão Silveira de Souza (2010200689)
 
 ---
 
-# 1. Introdução
+## 1. Introdução
 
-O protocolo **HTTP (Hypertext Transfer Protocol)** é a base da World Wide Web, permitindo a comunicação entre clientes e servidores.
+O protocolo HTTP (Hypertext Transfer Protocol) é a base da World Wide Web, permitindo a comunicação entre clientes e servidores. Com o crescimento das aplicações web, que passaram a exigir maior velocidade e segurança, tornou-se necessário evoluir os protocolos de comunicação para suportar conexões mais eficientes e criptografadas.
 
-Com o crescimento das aplicações web, tornou-se necessário evoluir os protocolos para oferecer maior desempenho e segurança.
+O HTTP/1.1 apresenta limitações de desempenho, como o problema de bloqueio de início de linha (*Head-of-Line Blocking*) e overhead de conexão. Embora o HTTP/3 traga melhorias de desempenho em cenários com perda de pacotes por meio do uso do protocolo QUIC, ainda há relativamente poucos estudos comparativos diretos entre HTTP/3 e HTTP/1.1 em cenários variados de rede, o que dificulta uma análise mais clara sobre quando sua adoção é mais vantajosa.
 
-O **HTTP/1.1** apresenta limitações importantes, como:
+## 2. Proposta
 
-- Head-of-Line Blocking;
-- Overhead de conexões;
-- Dependência do TCP.
+Este trabalho propõe uma análise comparativa entre os protocolos HTTP/1.1 e HTTP/3. A proposta é medir métricas como latência (RTT) e tempo de carregamento de páginas (*Page Load Time*) em um ambiente controlado, simulando diferentes condições de rede, como atraso e perda de pacotes, para avaliar os ganhos de desempenho do HTTP/3.
 
-Já o **HTTP/3**, baseado no protocolo **QUIC**, busca reduzir esses problemas oferecendo melhor desempenho, principalmente em redes com perda de pacotes e alta latência.
+### Tecnologias utilizadas
 
-Este trabalho procura responder à seguinte questão:
-
-> **Em quais condições de rede o HTTP/3 realmente apresenta vantagens em relação ao HTTP/1.1?**
+- **Docker** — criação de ambientes isolados e reprodutíveis
+- **tc (Traffic Control)** — simulação de diferentes condições de rede
+- **Scripts em Python** — coleta de dados, utilizando bibliotecas compatíveis com QUIC e a biblioteca padrão `socket`/`requests` para conexões HTTP/1.1
+- **Wireshark** — análise detalhada do tráfego de rede
+- **Mininet** — emulação de topologias de rede controladas (uso planejado)
 
 ---
 
-# 2. Objetivo
+## 3. Desenvolvimento
 
-Comparar os protocolos **HTTP/1.1** e **HTTP/3**, medindo:
+O trabalho adota um cenário simulado inspirado em ambientes hospitalares que utilizam sistemas de transferência e visualização de imagens médicas (como exames de tomografia, ressonância magnética e radiografias) por meio de aplicações web. Esse tipo de sistema é particularmente sensível a variações de latência e estabilidade de rede, uma vez que a transmissão de imagens médicas pode impactar diretamente a tomada de decisão clínica.
+
+### 3.1 Contexto do ambiente hospitalar simulado
+
+O ambiente modelado representa uma rede hospitalar de médio porte, contendo:
+
+- Aproximadamente 50 a 100 usuários simultâneos (médicos, técnicos e sistemas automatizados)
+- Múltiplos dispositivos acessando imagens médicas em servidores centrais
+- Tráfego predominantemente composto por requisições de arquivos de imagem (JPEG/PNG/DICOM simplificado) e carregamento de páginas de prontuário eletrônico
+- Uso de rede local com conexão externa intermitente (simulando dependência de infraestrutura mista)
+
+### 3.2 Fatores do experimento
+
+- **Protocolo de aplicação:** HTTP/1.1 (baseado em TCP, com TLS 1.3) e HTTP/3 (baseado em QUIC/UDP)
+- **Condição de rede:** latência artificial (introduzida via `tc netem`) e perda de pacotes
+- **Carga de requisições:** número fixo de requisições por teste (10, 50 e 100 requisições planejadas)
+
+### 3.3 Parâmetros de configuração
+
+- **Latência:** 0 ms, 50 ms, 100 ms e 200 ms
+- **Perda de pacotes** (cenário futuro): 0%, 1% e 5%
+- **Número de execuções por cenário:** 10 repetições
+- **Tipo de requisição:** HTTP GET para arquivos de imagem e páginas web simuladas
+
+### 3.4 Cenários experimentais
+
+| Cenário | Descrição | Latência | Perda | Objetivo |
+|---|---|---|---|---|
+| **A** | Rede ideal (baseline) | 0 ms | 0% | Estabelecer referência de desempenho |
+| **B** | Rede hospitalar estável | 50 ms | 0% | Simular operação interna normal |
+| **C** | Rede hospitalar congestionada | 100 ms | 1% | Simular horário de pico e sobrecarga |
+| **D** | Rede degradada (em estudo) | 200 ms | 5% | Simular falhas de infraestrutura ou link externo instável |
+
+### 3.5 Métricas de avaliação
 
 - RTT (Round Trip Time)
-- Page Load Time
-- Jitter
-- Estabilidade da conexão
+- Tempo de carregamento de requisições (Page Load Time)
+- Variação de tempo entre requisições (jitter)
+- Estabilidade de conexão sob perda de pacotes
 
-em diferentes cenários simulados de rede.
+### 3.6 Infraestrutura tecnológica
 
----
+- **Docker** — criação de ambientes isolados para servidores HTTP/1.1 e HTTP/3
+- **Caddy Server** — implementação do HTTP/3 com suporte nativo a QUIC
+- **Python 3** — automação dos testes e coleta de métricas
+- **requests** (Python) — execução de requisições HTTP/1.1
+- **aioquic** (Python) — execução de requisições HTTP/3 sobre QUIC
+- **tc (Traffic Control / netem)** — simulação de latência e perda de pacotes
+- **Wireshark** — análise de tráfego de rede (TCP e UDP/QUIC)
+- **Mininet** (planejado) — emulação de topologias de rede hospitalar
 
-# 3. Tecnologias Utilizadas
+### 3.7 Configuração das condições de rede
 
-| Tecnologia | Finalidade |
-|------------|------------|
-| Docker | Ambientes isolados |
-| tc (netem) | Simulação de latência e perda |
-| Python | Automação dos testes |
-| requests | Cliente HTTP/1.1 |
-| aioquic | Cliente HTTP/3 |
-| Caddy Server | Servidor HTTP/3 |
-| Wireshark | Captura de tráfego |
-| Mininet *(planejado)* | Emulação de redes |
+Para simular diferentes condições de rede, foi utilizada a ferramenta `tc netem`, disponível no Linux, permitindo introduzir artificialmente latência e perda de pacotes em uma interface de rede. Os experimentos foram realizados sobre a interface de loopback (`lo`).
 
----
-
-# 4. Desenvolvimento
-
-## 4.1 Cenário Simulado
-
-Foi utilizado um ambiente inspirado em uma rede hospitalar contendo:
-
-- 50–100 usuários simultâneos;
-- acesso a imagens médicas;
-- prontuário eletrônico via navegador;
-- conexão local com acesso externo.
-
----
-
-## 4.2 Variáveis do Experimento
-
-### Protocolos
-
-- HTTP/1.1 (TCP + TLS)
-- HTTP/3 (QUIC/UDP)
-
-### Condições de rede
-
-- Latência
-- Perda de pacotes
-
-### Quantidade de requisições
-
-- 10
-- 50
-- 100
-
----
-
-## 4.3 Parâmetros
-
-| Parâmetro | Valores |
-|-----------|---------|
-| Latência | 0, 50, 100, 200 ms |
-| Perda | 0%, 1%, 5% |
-| Repetições | 10 |
-| Método | HTTP GET |
-
----
-
-## 4.4 Cenários
-
-| Cenário | Latência | Perda | Objetivo |
-|----------|----------|--------|----------|
-| A | 0 ms | 0% | Baseline |
-| B | 50 ms | 0% | Rede hospitalar normal |
-| C | 100 ms | 1% | Horário de pico |
-| D | 200 ms | 5% | Rede degradada |
-
----
-
-## 4.5 Métricas Avaliadas
-
-- RTT
-- Tempo de carregamento
-- Jitter
-- Taxa de sucesso
-
----
-
-# 5. Infraestrutura
-
-- Docker
-- Caddy Server
-- Python 3
-- requests
-- aioquic
-- tc (netem)
-- Wireshark
-- Mininet (planejado)
-
----
-
-# 6. Configuração da Rede
-
-## Cenário B
-
+**Cenário B (50 ms de latência):**
 ```bash
 sudo tc qdisc add dev lo root netem delay 50ms
 ```
 
-## Cenário C
-
+**Cenário C (100 ms de latência e 1% de perda):**
 ```bash
 sudo tc qdisc add dev lo root netem delay 100ms loss 1%
 ```
 
-## Cenário D
-
+**Cenário D (200 ms de latência e 5% de perda):**
 ```bash
 sudo tc qdisc add dev lo root netem delay 200ms loss 5%
 ```
 
-Remover configuração:
-
+Após cada conjunto de testes, as configurações eram removidas:
 ```bash
 sudo tc qdisc del dev lo root
 ```
 
----
+A correta aplicação das regras foi validada pela observação do aumento dos tempos de resposta medidos pelos clientes HTTP/1.1 e HTTP/3.
 
-# 7. Coleta de Dados
+### 3.8 Coleta e armazenamento dos dados
 
-Foram utilizados dois clientes independentes:
+Foram desenvolvidos dois scripts independentes: um para o protocolo HTTP/1.1 (usando a biblioteca `requests`) e outro para HTTP/3 (usando a biblioteca `aioquic`, conectando ao servidor Caddy). Para cada cenário experimental foram executadas dez requisições consecutivas por protocolo, com os resultados armazenados em arquivos CSV.
 
-- Cliente HTTP/1.1
-- Cliente HTTP/3
+**Campos registrados em cada execução:**
 
-Cada cenário executou **10 requisições** por protocolo.
-
-Os resultados foram armazenados em arquivos CSV contendo:
-
-- protocolo
-- cenário
-- latência
-- perda
-- número da execução
-- tempo (ms)
-- sucesso
+| Campo | Descrição |
+|---|---|
+| `protocolo` | Protocolo utilizado (HTTP/1.1 ou HTTP/3) |
+| `cenario` | Cenário experimental avaliado |
+| `latencia_ms` | Latência configurada via `tc netem` |
+| `perda_pct` | Percentual de perda de pacotes configurado |
+| `execucao` | Número da execução |
+| `tempo_ms` | Tempo total observado para a requisição |
+| `sucesso` | Indicador de sucesso (1 = sucesso, 0 = falha) |
 
 ---
 
-# 8. Evidências dos Testes
+## 4. Evidências de Execução dos Testes
 
-## Inicialização
+> As imagens/prints de terminal referenciadas abaixo (Figuras 1 a 10) fazem parte do relatório completo do trabalho.
 
-- Servidor HTTP/1.1 (porta 8000)
-- Servidor HTTP/3 via Docker (porta 443)
+### 4.1 Inicialização dos servidores HTTP/1.1 e HTTP/3
 
-### Figuras
+O servidor HTTP/1.1 foi inicializado localmente na porta 8000 utilizando o módulo `http.server` do Python, enquanto o servidor HTTP/3 foi inicializado via Docker, utilizando o Caddy Server com suporte nativo a QUIC na porta 443.
 
-- Figura 1 — Servidor HTTP/1.1
-- Figura 2 — Servidor HTTP/3 (Docker)
+- *Figura 1* — Inicialização do servidor HTTP/1.1 (porta 8000)
+- *Figura 2* — Inicialização do ambiente HTTP/3 via Docker Compose (servidor Caddy)
 
----
+### 4.2 Testes básicos de latência (Cenário A — Baseline)
 
-## Cenário A
+Os testes iniciais em ambiente local sem degradação de rede (Cenário A) resultaram em tempos médios de aproximadamente 5 a 9 ms para o HTTP/1.1.
 
-Execução dos clientes HTTP/1.1 e HTTP/3.
+- *Figura 3* — Execução do cliente HTTP/1.1 e coleta das métricas (Cenário A)
+- *Figura 4* — Execução do cliente HTTP/3 (aioquic) e coleta das métricas (Cenário A)
 
-- Figura 3
-- Figura 4
+### 4.3 Teste preliminar com perda de pacotes
 
----
+Foi realizado um teste preliminar utilizando HTTP/1.1 em ambiente controlado, com degradação artificial de rede (100 ms de latência e 1% de perda de pacotes). Os resultados indicaram aumento significativo no tempo de resposta e maior variação entre requisições consecutivas, com alguns casos ultrapassando 1 segundo (chegando a ~5 segundos), comportamento associado ao impacto de retransmissões no TCP sob perda de pacotes.
 
-## Teste com perda de pacotes
+- *Figura 5* — Teste HTTP/1.1 com 100 ms de latência e 1% de perda de pacotes (tc netem)
 
-100 ms de atraso + 1% de perda.
+### 4.4 Validação inicial do ambiente HTTP/3
 
-Figura 5.
+Foi realizada a configuração inicial do ambiente HTTP/3 utilizando o servidor Caddy com suporte nativo a QUIC. Os testes preliminares confirmaram a ativação do listener HTTP/3, o suporte simultâneo aos protocolos HTTP/1.1, HTTP/2 e HTTP/3, e a exposição da porta UDP 443 necessária para a comunicação QUIC. O cliente experimental em Python (aioquic) confirmou o estabelecimento de uma conexão HTTP/3 em aproximadamente 203 ms na validação inicial.
 
----
+- *Figura 6* — Container Caddy em execução, com a porta 443 exposta em TCP e UDP
+- *Figura 7* — Logs do servidor Caddy demonstrando a habilitação do HTTP/3 (QUIC) e suporte aos protocolos h1, h2 e h3
+- *Figura 8* — Conexão HTTP/3 estabelecida com sucesso pelo cliente experimental em Python (aioquic)
 
-## Validação do HTTP/3
+Durante o desenvolvimento, também foram registradas falhas pontuais de conexão (`ConnectionError`) no cliente HTTP/3, posteriormente contornadas, o que evidencia a maior complexidade de implementação do QUIC em comparação ao modelo cliente-servidor tradicional do HTTP/1.1.
 
-- Caddy com QUIC
-- Porta UDP 443
-- Cliente aioquic
+### 4.5 Captura de tráfego com Wireshark
 
-Figuras:
+O tráfego HTTP/1.1 foi capturado na interface de loopback, filtrado pela porta TCP 8000, confirmando o uso do protocolo TCP com o *three-way handshake* característico. Já o tráfego HTTP/3 foi observado na porta UDP 443, utilizada pelo protocolo QUIC.
 
-- Figura 6
-- Figura 7
-- Figura 8
+- *Figura 9* — Captura de tráfego HTTP/1.1 (TCP, porta 8000)
+- *Figura 10* — Captura de tráfego HTTP/3 (QUIC sobre UDP, porta 443)
 
 ---
 
-## Captura no Wireshark
+## 5. Resultados Obtidos
 
-HTTP/1.1
+Os resultados consolidados dos experimentos são apresentados na tabela abaixo, com as métricas de tempo médio de resposta, desvio padrão, jitter e taxa de sucesso para cada protocolo em todos os cenários avaliados.
 
-- TCP
-- Porta 8000
+**Tabela 1 — Resultados experimentais**
 
-HTTP/3
+| Cenário | Protocolo | Média (ms) | Desvio Padrão (ms) | Jitter (ms) | Sucesso (%) |
+|---|---|---|---|---|---|
+| A | HTTP/1.1 | 7,41 | 10,78 | 6,73 | 100 |
+| A | HTTP/3 | 32,97 | 42,88 | 19,84 | 100 |
+| B | HTTP/1.1 | 208,84 | 3,69 | 4,14 | 100 |
+| B | HTTP/3 | 114,32 | 4,50 | 3,96 | 100 |
+| C | HTTP/1.1 | 408,51 | 4,86 | 4,80 | 100 |
+| C | HTTP/3 | 239,50 | 62,68 | 51,10 | 100 |
+| D | HTTP/1.1 | 861,10 | 159,06 | 114,17 | 100 |
+| D | HTTP/3 | 459,90 | 125,83 | 91,19 | 100 |
 
-- UDP
-- Porta 443
+Observa-se que ambos os protocolos obtiveram taxa de sucesso de 100% em todos os cenários. Entretanto, à medida que a latência e a perda de pacotes aumentaram, o HTTP/3 apresentou tempos médios inferiores aos observados para o HTTP/1.1, especialmente nos cenários C e D.
 
-Figuras:
+O aumento progressivo da latência e da perda de pacotes impactou negativamente ambos os protocolos. Entretanto, o HTTP/3 apresentou crescimento menos acentuado do tempo médio de resposta em comparação ao HTTP/1.1. Nos cenários mais degradados (C e D), o protocolo HTTP/3 manteve desempenho superior, indicando maior robustez diante de condições adversas de rede. A taxa de sucesso permaneceu em 100% em todos os experimentos, evidenciando estabilidade operacional em ambos os protocolos.
 
-- Figura 9
-- Figura 10
-
----
-
-# 9. Resultados
-
-| Cenário | Protocolo | Média (ms) | Desvio | Jitter | Sucesso |
-|---------|-----------|-----------:|--------:|--------:|---------:|
-| A | HTTP/1.1 | 7.41 | 10.78 | 6.73 | 100% |
-| A | HTTP/3 | 32.97 | 42.88 | 19.84 | 100% |
-| B | HTTP/1.1 | 208.84 | 3.69 | 4.14 | 100% |
-| B | HTTP/3 | 114.32 | 4.50 | 3.96 | 100% |
-| C | HTTP/1.1 | 408.51 | 4.86 | 4.80 | 100% |
-| C | HTTP/3 | 239.50 | 62.68 | 51.10 | 100% |
-| D | HTTP/1.1 | 861.10 | 159.06 | 114.17 | 100% |
-| D | HTTP/3 | 459.90 | 125.83 | 91.19 | 100% |
+> *Gráfico 1* — Tempo médio de resposta por cenário: HTTP/1.1 x HTTP/3
+> *Gráfico 2* — Jitter por cenário: HTTP/1.1 x HTTP/3
+> *Gráfico 3* — Desvio padrão (variabilidade) dos tempos de resposta por cenário
 
 ---
 
-## Gráficos
+## 6. Discussão
 
-- Gráfico 1 — Tempo médio
-- Gráfico 2 — Jitter
-- Gráfico 3 — Desvio padrão
+### 6.1 Comparação entre HTTP/1.1 e HTTP/3
 
----
+Os resultados obtidos demonstram diferenças significativas de desempenho entre os protocolos HTTP/1.1 e HTTP/3 nos cenários analisados.
 
-# 10. Discussão
+No **Cenário A** (0 ms de atraso e 0% de perda), o HTTP/1.1 apresentou menor tempo médio de resposta (7,41 ms) em comparação ao HTTP/3 (32,97 ms). Esse resultado pode ser explicado pelo fato de que, em um ambiente local sem degradação da rede, o custo adicional do estabelecimento da conexão QUIC e das bibliotecas utilizadas para implementação do HTTP/3 torna-se mais perceptível.
 
-## HTTP/1.1 × HTTP/3
+Entretanto, à medida que as condições da rede se tornam mais adversas, observa-se uma mudança significativa no comportamento dos protocolos:
 
-No cenário sem degradação, o HTTP/1.1 apresentou menor tempo médio.
+- **Cenário B** (50 ms de atraso, 0% de perda): HTTP/3 com 114,32 ms, contra 208,84 ms do HTTP/1.1
+- **Cenário C** (100 ms de atraso, 1% de perda): HTTP/3 com 239,50 ms, contra 408,51 ms do HTTP/1.1
+- **Cenário D** (200 ms de atraso, 5% de perda): HTTP/3 com 459,90 ms, contra 861,10 ms do HTTP/1.1
 
-À medida que aumentaram a latência e a perda de pacotes, o HTTP/3 passou a apresentar desempenho superior.
+Dessa forma, verifica-se que o HTTP/3 apresentou desempenho progressivamente superior conforme aumentaram a latência e a perda de pacotes da rede.
 
-### Comparação
+### 6.2 Explicação das diferenças observadas
 
-| Cenário | HTTP/1.1 | HTTP/3 |
-|----------|----------:|--------:|
-| B | 208.84 ms | 114.32 ms |
-| C | 408.51 ms | 239.50 ms |
-| D | 861.10 ms | 459.90 ms |
+As diferenças observadas decorrem principalmente das características dos protocolos de transporte utilizados por cada versão do HTTP.
 
----
+O HTTP/1.1 utiliza o protocolo TCP, que exige o estabelecimento de conexão por meio do *three-way handshake* e, em conexões seguras, também o handshake do TLS. Quando ocorre perda de pacotes, o TCP tende a retransmitir segmentos e pode reduzir sua janela de congestionamento, aumentando o tempo necessário para a entrega dos dados.
 
-## Motivos
+Já o HTTP/3 utiliza o protocolo QUIC, implementado sobre UDP. O QUIC integra mecanismos de transporte e segurança em um único protocolo, reduzindo o número de etapas necessárias para estabelecer a comunicação, além de ter sido projetado para lidar melhor com perdas de pacotes e redes de alta latência.
 
-### HTTP/1.1
+Os resultados experimentais confirmam essa característica: à medida que a latência e a perda aumentaram, o ganho de desempenho do HTTP/3 tornou-se mais evidente.
 
-- TCP
-- Three-way Handshake
-- TLS separado
-- Retransmissões
+### 6.3 Relação dos resultados com TCP e QUIC
 
-### HTTP/3
+No HTTP/1.1, a dependência do TCP faz com que atrasos na transmissão e retransmissões tenham impacto direto sobre toda a conexão — comportamento particularmente perceptível nos Cenários C e D. No HTTP/3, o uso do QUIC permitiu maior resiliência diante das mesmas condições de rede; embora também tenham ocorrido aumentos nos tempos médios, esses aumentos foram significativamente menores.
 
-- QUIC
-- UDP
-- TLS integrado
-- Melhor tratamento para perdas
+A análise do tráfego capturado no Wireshark confirmou ainda a utilização de TCP na comunicação HTTP/1.1 e de UDP na porta 443 para a comunicação baseada em QUIC utilizada pelo HTTP/3, corroborando a arquitetura prevista para cada protocolo e alinhando os resultados obtidos com o comportamento descrito na literatura especializada sobre HTTP/3 e QUIC.
 
 ---
 
-# 11. Conclusão
+## 7. Conclusão
 
-Os experimentos mostraram que:
+O objetivo deste trabalho foi comparar o desempenho dos protocolos HTTP/1.1 e HTTP/3 em diferentes condições de rede, analisando o impacto da latência e da perda de pacotes sobre o tempo de resposta das aplicações.
 
-- HTTP/1.1 é mais rápido apenas em ambiente ideal;
-- HTTP/3 apresenta desempenho significativamente superior em redes degradadas;
-- no cenário mais severo houve aproximadamente **46% de redução** no tempo médio de resposta.
+Foram implementados ambientes experimentais utilizando um servidor HTTP/1.1 convencional e um servidor HTTP/3 baseado em QUIC, com testes em quatro cenários distintos, variando os níveis de atraso e perda de pacotes por meio da ferramenta `tc netem`.
 
-No contexto hospitalar simulado, essa diferença representa menor tempo de acesso a imagens médicas e maior agilidade na tomada de decisão clínica.
+Os resultados mostraram que o HTTP/1.1 apresentou melhor desempenho apenas no cenário sem degradação da rede, onde o custo adicional do QUIC se tornou mais perceptível. Nos cenários com aumento de latência e perda de pacotes, o HTTP/3 apresentou desempenho significativamente superior. No cenário mais severo (200 ms de atraso e 5% de perda), o tempo médio do HTTP/3 foi aproximadamente **46% menor** que o observado para o HTTP/1.1.
 
-Embora os testes tenham sido realizados em ambiente controlado, os resultados reforçam que o HTTP/3 representa uma evolução importante em relação ao HTTP/1.1, principalmente devido às características do protocolo QUIC.
+Esses resultados têm implicações diretas para o contexto hospitalar simulado neste trabalho. Em um ambiente com 50 a 100 usuários simultâneos acessando imagens médicas de alta resolução (como tomografias e ressonâncias), a superioridade do HTTP/3 nos Cenários C e D — que simulam, respectivamente, o horário de pico (100 ms, 1% de perda) e falhas de infraestrutura (200 ms, 5% de perda) — é especialmente relevante. Nesses cenários, a redução de aproximadamente **41% e 46%** no tempo de resposta representa não apenas ganho de desempenho técnico, mas potencial impacto na agilidade da tomada de decisão clínica, onde atrasos na visualização de imagens diagnósticas podem comprometer o atendimento ao paciente.
 
----
+### Limitações do estudo
 
-# Trabalhos Futuros
+- Experimentos realizados em ambiente local controlado, com um conjunto específico de ferramentas e configurações
+- Cenário hospitalar simulado de forma simplificada, sem emular concorrência real entre múltiplos clientes simultâneos
+- Ausência de tráfego de arquivos DICOM de grande porte ou variações de topologia de rede
 
-- Utilização do Mininet
-- Simulação com múltiplos clientes
-- Arquivos DICOM reais
-- Maior volume de tráfego
-- Ambientes distribuídos
-- Comparação entre diferentes servidores HTTP/3
+### Trabalhos futuros
 
----
+- Ampliar a análise para ambientes distribuídos com **Mininet**
+- Testar diferentes implementações de servidores
+- Simular cargas de trabalho mais próximas da realidade hospitalar, incluindo transmissão paralela de exames de imagem por dezenas de usuários
 
-# Licença
+### Conclusão geral
 
-Projeto desenvolvido exclusivamente para fins acadêmicos.
+O HTTP/3 representa uma evolução importante em relação ao HTTP/1.1, oferecendo melhor desempenho e maior robustez em condições adversas de rede, principalmente devido às características do protocolo QUIC. No contexto hospitalar estudado, sua adoção mostra-se especialmente promissora para garantir a disponibilidade e a velocidade na transmissão de imagens médicas em situações de rede degradada, contribuindo para a continuidade e a qualidade do atendimento clínico.
