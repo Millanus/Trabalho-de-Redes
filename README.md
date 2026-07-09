@@ -2,7 +2,7 @@
 
 Trabalho da disciplina de Redes de Computadores, propondo uma análise comparativa entre os protocolos **HTTP/1.1** e **HTTP/3**, com foco em métricas de latência, jitter e estabilidade de conexão em cenários inspirados em uma rede hospitalar.
 
-## 👥 Integrantes
+## Integrantes
 
 - Guilherme Dornelles Guarienti Millani (2510200473) – Líder
 - Iago Leão Silveira de Souza (2010200689)
