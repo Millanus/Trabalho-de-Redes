@@ -147,11 +147,11 @@ Os testes iniciais em ambiente local sem degradação de rede (Cenário A) resul
 
 
 <img width="905" height="373" alt="FIGURA 3" src="https://github.com/user-attachments/assets/b4cc17a2-5ef6-47f9-81a4-dcf3dfbed8fa" />
-- *Figura 3* — Execução do cliente HTTP/1.1 e coleta das métricas (Cenário A)
+      -*Figura 3* — Execução do cliente HTTP/1.1 e coleta das métricas (Cenário A)
 
 
 <img width="1402" height="347" alt="FIGURA 4" src="https://github.com/user-attachments/assets/b3fd68de-037b-49f2-9208-3a740afd57e0" />
-- *Figura 4* — Execução do cliente HTTP/3 (aioquic) e coleta das métricas (Cenário A)
+     - *Figura 4* — Execução do cliente HTTP/3 (aioquic) e coleta das métricas (Cenário A)
 
 ### 4.3 Teste preliminar com perda de pacotes
 
