@@ -2,7 +2,7 @@
 
 Trabalho da disciplina de Redes de Computadores, propondo uma análise comparativa entre os protocolos **HTTP/1.1** e **HTTP/3**, com foco em métricas de latência, jitter e estabilidade de conexão em cenários inspirados em uma rede hospitalar.
 
-## Integrantes
+## 👥 Integrantes
 
 - Guilherme Dornelles Guarienti Millani (2510200473) – Líder
 - Iago Leão Silveira de Souza (2010200689)
@@ -128,57 +128,53 @@ Foram desenvolvidos dois scripts independentes: um para o protocolo HTTP/1.1 (us
 
 ## 4. Evidências de Execução dos Testes
 
-> As imagens/prints de terminal referenciadas abaixo (Figuras 1 a 10) fazem parte do relatório completo do trabalho.
-
 ### 4.1 Inicialização dos servidores HTTP/1.1 e HTTP/3
 
-O servidor HTTP/1.1 foi inicializado localmente na porta 8000 utilizando o módulo `http.server` do Python, enquanto o servidor HTTP/3 foi inicializado via Docker, utilizando o Caddy Server com suporte nativo a QUIC na porta 443
+O servidor HTTP/1.1 foi inicializado localmente na porta 8000 utilizando o módulo `http.server` do Python, enquanto o servidor HTTP/3 foi inicializado via Docker, utilizando o Caddy Server com suporte nativo a QUIC na porta 443.
 
 <img width="1207" height="457" alt="Figura 1" src="https://github.com/user-attachments/assets/ae230b31-54ef-4770-aed3-46d6919e910e" />
-Figura 1 — Inicialização do servidor HTTP/1.1 (porta 8000).
 
+*Figura 1 — Inicialização do servidor HTTP/1.1 (porta 8000).*
 
-<img width="902" height="609" alt="FIGURA 2" src="https://github.com/user-attachments/assets/f57e66a8-3ed0-4e96-a6c3-06eaa1a33cb2" />
-Figura 2 — Inicialização do ambiente HTTP/3 via Docker Compose (servidor Caddy)
+<img width="902" height="609" alt="Figura 2" src="https://github.com/user-attachments/assets/f57e66a8-3ed0-4e96-a6c3-06eaa1a33cb2" />
+
+*Figura 2 — Inicialização do ambiente HTTP/3 via Docker Compose (servidor Caddy).*
 
 ### 4.2 Testes básicos de latência (Cenário A — Baseline)
 
 Os testes iniciais em ambiente local sem degradação de rede (Cenário A) resultaram em tempos médios de aproximadamente 5 a 9 ms para o HTTP/1.1.
 
+<img width="905" height="373" alt="Figura 3" src="https://github.com/user-attachments/assets/b4cc17a2-5ef6-47f9-81a4-dcf3dfbed8fa" />
 
-<img width="905" height="373" alt="FIGURA 3" src="https://github.com/user-attachments/assets/b4cc17a2-5ef6-47f9-81a4-dcf3dfbed8fa" />
-Figura 3 — Execução do cliente HTTP/1.1 e coleta das métricas (Cenário A)
+*Figura 3 — Execução do cliente HTTP/1.1 e coleta das métricas (Cenário A).*
 
+<img width="1402" height="347" alt="Figura 4" src="https://github.com/user-attachments/assets/b3fd68de-037b-49f2-9208-3a740afd57e0" />
 
-<img width="1402" height="347" alt="FIGURA 4" src="https://github.com/user-attachments/assets/b3fd68de-037b-49f2-9208-3a740afd57e0" />
-Figura 4 — Execução do cliente HTTP/3 (aioquic) e coleta das métricas (Cenário A)
+*Figura 4 — Execução do cliente HTTP/3 (aioquic) e coleta das métricas (Cenário A).*
 
 ### 4.3 Teste preliminar com perda de pacotes
 
 Foi realizado um teste preliminar utilizando HTTP/1.1 em ambiente controlado, com degradação artificial de rede (100 ms de latência e 1% de perda de pacotes). Os resultados indicaram aumento significativo no tempo de resposta e maior variação entre requisições consecutivas, com alguns casos ultrapassando 1 segundo (chegando a ~5 segundos), comportamento associado ao impacto de retransmissões no TCP sob perda de pacotes.
 
+<img width="1283" height="702" alt="Figura 5" src="https://github.com/user-attachments/assets/9a7a275b-7dfa-4e7e-b12e-4a10d506857b" />
 
-
-<img width="1283" height="702" alt="FIGURA 5" src="https://github.com/user-attachments/assets/9a7a275b-7dfa-4e7e-b12e-4a10d506857b" />
-Figura 5 — Teste HTTP/1.1 com 100 ms de latência e 1% de perda de pacotes (tc netem)
+*Figura 5 — Teste HTTP/1.1 com 100 ms de latência e 1% de perda de pacotes (tc netem).*
 
 ### 4.4 Validação inicial do ambiente HTTP/3
 
 Foi realizada a configuração inicial do ambiente HTTP/3 utilizando o servidor Caddy com suporte nativo a QUIC. Os testes preliminares confirmaram a ativação do listener HTTP/3, o suporte simultâneo aos protocolos HTTP/1.1, HTTP/2 e HTTP/3, e a exposição da porta UDP 443 necessária para a comunicação QUIC. O cliente experimental em Python (aioquic) confirmou o estabelecimento de uma conexão HTTP/3 em aproximadamente 203 ms na validação inicial.
 
+<img width="1284" height="359" alt="Figura 6" src="https://github.com/user-attachments/assets/e50946de-8d8c-4fa3-a9e3-efa504382f4d" />
 
+*Figura 6 — Container Caddy em execução, com a porta 443 exposta em TCP e UDP.*
 
-<img width="1284" height="359" alt="FIGURA 6" src="https://github.com/user-attachments/assets/e50946de-8d8c-4fa3-a9e3-efa504382f4d" />
-Figura 6 — Container Caddy em execução, com a porta 443 exposta em TCP e UDP
+<img width="1125" height="731" alt="Figura 7" src="https://github.com/user-attachments/assets/c165c823-2e7e-4d56-96fe-a0962788441d" />
 
+*Figura 7 — Logs do servidor Caddy demonstrando a habilitação do HTTP/3 (QUIC) e suporte aos protocolos h1, h2 e h3.*
 
-<img width="1125" height="731" alt="FIGURA 7" src="https://github.com/user-attachments/assets/c165c823-2e7e-4d56-96fe-a0962788441d" />
-Figura 7 — Logs do servidor Caddy demonstrando a habilitação do HTTP/3 (QUIC) e suporte aos protocolos h1, h2 e h3
+<img width="1530" height="195" alt="Figura 8" src="https://github.com/user-attachments/assets/8e3f221f-3403-48b3-a6a8-05aeb0b63399" />
 
-
-
-<img width="1530" height="195" alt="FIGURA 8" src="https://github.com/user-attachments/assets/8e3f221f-3403-48b3-a6a8-05aeb0b63399" />
-Figura 8 — Conexão HTTP/3 estabelecida com sucesso pelo cliente experimental em Python (aioquic)
+*Figura 8 — Conexão HTTP/3 estabelecida com sucesso pelo cliente experimental em Python (aioquic).*
 
 Durante o desenvolvimento, também foram registradas falhas pontuais de conexão (`ConnectionError`) no cliente HTTP/3, posteriormente contornadas, o que evidencia a maior complexidade de implementação do QUIC em comparação ao modelo cliente-servidor tradicional do HTTP/1.1.
 
@@ -186,13 +182,13 @@ Durante o desenvolvimento, também foram registradas falhas pontuais de conexão
 
 O tráfego HTTP/1.1 foi capturado na interface de loopback, filtrado pela porta TCP 8000, confirmando o uso do protocolo TCP com o *three-way handshake* característico. Já o tráfego HTTP/3 foi observado na porta UDP 443, utilizada pelo protocolo QUIC.
 
+<img width="789" height="611" alt="Figura 9" src="https://github.com/user-attachments/assets/847f7e7e-006e-4246-9960-a2572288428a" />
 
+*Figura 9 — Captura de tráfego HTTP/1.1 (TCP, porta 8000).*
 
-<img width="789" height="611" alt="FIGURA 9" src="https://github.com/user-attachments/assets/847f7e7e-006e-4246-9960-a2572288428a" />
-Figura 9 — Captura de tráfego HTTP/1.1 (TCP, porta 8000)
+<img width="788" height="615" alt="Figura 10" src="https://github.com/user-attachments/assets/d4695c58-f8bb-4b23-a7d5-617faee3a92a" />
 
-<img width="788" height="615" alt="FIGURA 10" src="https://github.com/user-attachments/assets/d4695c58-f8bb-4b23-a7d5-617faee3a92a" />
-Figura 10 — Captura de tráfego HTTP/3 (QUIC sobre UDP, porta 443)
+*Figura 10 — Captura de tráfego HTTP/3 (QUIC sobre UDP, porta 443).*
 
 ---
 
@@ -217,17 +213,17 @@ Observa-se que ambos os protocolos obtiveram taxa de sucesso de 100% em todos os
 
 O aumento progressivo da latência e da perda de pacotes impactou negativamente ambos os protocolos. Entretanto, o HTTP/3 apresentou crescimento menos acentuado do tempo médio de resposta em comparação ao HTTP/1.1. Nos cenários mais degradados (C e D), o protocolo HTTP/3 manteve desempenho superior, indicando maior robustez diante de condições adversas de rede. A taxa de sucesso permaneceu em 100% em todos os experimentos, evidenciando estabilidade operacional em ambos os protocolos.
 
+<img width="1037" height="667" alt="Gráfico 1" src="https://github.com/user-attachments/assets/20516069-d661-48bc-bb4e-e6b7445c8c34" />
 
-<img width="1037" height="667" alt="GRAFICO 1" src="https://github.com/user-attachments/assets/20516069-d661-48bc-bb4e-e6b7445c8c34" />
-> Gráfico 1 — Tempo médio de resposta por cenário: HTTP/1.1 x HTTP/3
+*Gráfico 1 — Tempo médio de resposta por cenário: HTTP/1.1 x HTTP/3.*
 
+<img width="1055" height="656" alt="Gráfico 2" src="https://github.com/user-attachments/assets/e7b93751-7af8-4cb0-86b4-cbd091e4e501" />
 
-<img width="1055" height="656" alt="GRAFICO 2" src="https://github.com/user-attachments/assets/e7b93751-7af8-4cb0-86b4-cbd091e4e501" />
-> Gráfico 2 — Jitter por cenário: HTTP/1.1 x HTTP/3
+*Gráfico 2 — Jitter por cenário: HTTP/1.1 x HTTP/3.*
 
+<img width="975" height="653" alt="Gráfico 3" src="https://github.com/user-attachments/assets/d86aeab9-a062-447b-a074-2d16e7492460" />
 
-<img width="975" height="653" alt="GRAFICO 3" src="https://github.com/user-attachments/assets/d86aeab9-a062-447b-a074-2d16e7492460" />
-> Gráfico 3 — Desvio padrão (variabilidade) dos tempos de resposta por cenário
+*Gráfico 3 — Desvio padrão (variabilidade) dos tempos de resposta por cenário.*
 
 ---
 
