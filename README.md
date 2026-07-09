@@ -138,7 +138,7 @@ O servidor HTTP/1.1 foi inicializado localmente na porta 8000 utilizando o módu
 - *Figura 1* — Inicialização do servidor HTTP/1.1 (porta 8000)
 
 
-  <img width="902" height="609" alt="FIGURA 2" src="https://github.com/user-attachments/assets/f57e66a8-3ed0-4e96-a6c3-06eaa1a33cb2" />
+<img width="902" height="609" alt="FIGURA 2" src="https://github.com/user-attachments/assets/f57e66a8-3ed0-4e96-a6c3-06eaa1a33cb2" />
 - *Figura 2* — Inicialização do ambiente HTTP/3 via Docker Compose (servidor Caddy)
 
 ### 4.2 Testes básicos de latência (Cenário A — Baseline)
