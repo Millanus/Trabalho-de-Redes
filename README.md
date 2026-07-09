@@ -13,7 +13,7 @@ Trabalho da disciplina de Redes de Computadores, propondo uma análise comparati
 
 O protocolo HTTP (Hypertext Transfer Protocol) é a base da World Wide Web, permitindo a comunicação entre clientes e servidores. Com o crescimento das aplicações web, que passaram a exigir maior velocidade e segurança, tornou-se necessário evoluir os protocolos de comunicação para suportar conexões mais eficientes e criptografadas.
 
-O HTTP/1.1 apresenta limitações de desempenho, como o problema de bloqueio de início de linha (*Head-of-Line Blocking*) e overhead de conexão. Embora o HTTP/3 traga melhorias de desempenho em cenários com perda de pacotes por meio do uso do protocolo QUIC, ainda há relativamente poucos estudos comparativos diretos entre HTTP/3 e HTTP/1.1 em cenários variados de rede, o que dificulta uma análise mais clara sobre quando sua adoção é mais vantajosa.
+O HTTP/1.1 apresenta limitações de desempenho, como o problema de bloqueio de início de linha (Head-of-Line Blocking) e overhead de conexão. Embora o HTTP/3 traga melhorias de desempenho em cenários com perda de pacotes por meio do uso do protocolo QUIC, ainda há relativamente poucos estudos comparativos diretos entre HTTP/3 e HTTP/1.1 em cenários variados de rede, o que dificulta uma análise mais clara sobre quando sua adoção é mais vantajosa.
 
 ## 2. Proposta
 
@@ -31,7 +31,7 @@ Este trabalho propõe uma análise comparativa entre os protocolos HTTP/1.1 e HT
 
 ## 3. Desenvolvimento
 
-O trabalho adota um cenário simulado inspirado em ambientes hospitalares que utilizam sistemas de transferência e visualização de imagens médicas (como exames de tomografia, ressonância magnética e radiografias) por meio de aplicações web. Esse tipo de sistema é particularmente sensível a variações de latência e estabilidade de rede, uma vez que a transmissão de imagens médicas pode impactar diretamente a tomada de decisão clínica.
+O presente trabalho adota um cenário simulado inspirado em ambientes hospitalares que utilizam sistemas de transferência e visualização de imagens médicas (como exames de tomografia, ressonância magnética e radiografias) por meio de aplicações web. Esse tipo de sistema é particularmente sensível a variações de latência e estabilidade de rede, uma vez que a transmissão de imagens médicas pode impactar diretamente a tomada de decisão clínica.
 
 ### 3.1 Contexto do ambiente hospitalar simulado
 
@@ -233,10 +233,9 @@ O aumento progressivo da latência e da perda de pacotes impactou negativamente 
 
 Os resultados obtidos demonstram diferenças significativas de desempenho entre os protocolos HTTP/1.1 e HTTP/3 nos cenários analisados.
 
-No **Cenário A** (0 ms de atraso e 0% de perda), o HTTP/1.1 apresentou menor tempo médio de resposta (7,41 ms) em comparação ao HTTP/3 (32,97 ms). Esse resultado pode ser explicado pelo fato de que, em um ambiente local sem degradação da rede, o custo adicional do estabelecimento da conexão QUIC e das bibliotecas utilizadas para implementação do HTTP/3 torna-se mais perceptível.
+No Cenário A (0 ms de atraso e 0% de perda), o HTTP/1.1 apresentou menor tempo médio de resposta (7,41 ms) em comparação ao HTTP/3 (32,97 ms). Esse resultado pode ser explicado pelo fato de que, em um ambiente local sem degradação da rede, o custo adicional do estabelecimento da conexão QUIC e das bibliotecas utilizadas para implementação do HTTP/3 torna-se mais perceptível.
 
 Entretanto, à medida que as condições da rede se tornam mais adversas, observa-se uma mudança significativa no comportamento dos protocolos:
-
 - **Cenário B** (50 ms de atraso, 0% de perda): HTTP/3 com 114,32 ms, contra 208,84 ms do HTTP/1.1
 - **Cenário C** (100 ms de atraso, 1% de perda): HTTP/3 com 239,50 ms, contra 408,51 ms do HTTP/1.1
 - **Cenário D** (200 ms de atraso, 5% de perda): HTTP/3 com 459,90 ms, contra 861,10 ms do HTTP/1.1
@@ -249,15 +248,19 @@ As diferenças observadas decorrem principalmente das características dos proto
 
 O HTTP/1.1 utiliza o protocolo TCP, que exige o estabelecimento de conexão por meio do *three-way handshake* e, em conexões seguras, também o handshake do TLS. Quando ocorre perda de pacotes, o TCP tende a retransmitir segmentos e pode reduzir sua janela de congestionamento, aumentando o tempo necessário para a entrega dos dados.
 
-Já o HTTP/3 utiliza o protocolo QUIC, implementado sobre UDP. O QUIC integra mecanismos de transporte e segurança em um único protocolo, reduzindo o número de etapas necessárias para estabelecer a comunicação, além de ter sido projetado para lidar melhor com perdas de pacotes e redes de alta latência.
+Já o HTTP/3 utiliza o protocolo QUIC, implementado sobre UDP. O QUIC integra mecanismos de transporte e segurança em um único protocolo, reduzindo o número de etapas necessárias para estabelecer a comunicação. Outro aspecto relevante é que o QUIC foi projetado para lidar melhor com perdas de pacotes e redes de alta latência, reduzindo o impacto dessas condições sobre o desempenho da aplicação.
 
 Os resultados experimentais confirmam essa característica: à medida que a latência e a perda aumentaram, o ganho de desempenho do HTTP/3 tornou-se mais evidente.
 
 ### 6.3 Relação dos resultados com TCP e QUIC
 
-No HTTP/1.1, a dependência do TCP faz com que atrasos na transmissão e retransmissões tenham impacto direto sobre toda a conexão — comportamento particularmente perceptível nos Cenários C e D. No HTTP/3, o uso do QUIC permitiu maior resiliência diante das mesmas condições de rede; embora também tenham ocorrido aumentos nos tempos médios, esses aumentos foram significativamente menores.
+Os dados coletados mostram claramente a influência dos protocolos TCP e QUIC sobre o desempenho das aplicações.
 
-A análise do tráfego capturado no Wireshark confirmou ainda a utilização de TCP na comunicação HTTP/1.1 e de UDP na porta 443 para a comunicação baseada em QUIC utilizada pelo HTTP/3, corroborando a arquitetura prevista para cada protocolo e alinhando os resultados obtidos com o comportamento descrito na literatura especializada sobre HTTP/3 e QUIC.
+No HTTP/1.1, a dependência do TCP faz com que atrasos na transmissão e retransmissões tenham impacto direto sobre toda a conexão. Esse comportamento é particularmente perceptível nos Cenários C e D, nos quais o aumento da latência e da perda provocou crescimento expressivo do tempo médio de resposta.
+
+No HTTP/3, por outro lado, o uso do QUIC permitiu maior resiliência diante das mesmas condições de rede. Embora também tenham ocorrido aumentos nos tempos médios, esses aumentos foram significativamente menores.
+
+A análise do tráfego capturado no Wireshark confirmou ainda a utilização de TCP na comunicação HTTP/1.1 e de UDP na porta 443 para a comunicação baseada em QUIC utilizada pelo HTTP/3, corroborando a arquitetura prevista para cada protocolo. Assim, os resultados obtidos estão alinhados com
 
 ---
 
@@ -265,24 +268,14 @@ A análise do tráfego capturado no Wireshark confirmou ainda a utilização de 
 
 O objetivo deste trabalho foi comparar o desempenho dos protocolos HTTP/1.1 e HTTP/3 em diferentes condições de rede, analisando o impacto da latência e da perda de pacotes sobre o tempo de resposta das aplicações.
 
-Foram implementados ambientes experimentais utilizando um servidor HTTP/1.1 convencional e um servidor HTTP/3 baseado em QUIC, com testes em quatro cenários distintos, variando os níveis de atraso e perda de pacotes por meio da ferramenta `tc netem`.
+Para isso, foram implementados ambientes experimentais utilizando um servidor HTTP/1.1 convencional e um servidor HTTP/3 baseado em QUIC. Foram realizados testes em quatro cenários distintos, variando os níveis de atraso e perda de pacotes por meio da ferramenta tc netem.
 
-Os resultados mostraram que o HTTP/1.1 apresentou melhor desempenho apenas no cenário sem degradação da rede, onde o custo adicional do QUIC se tornou mais perceptível. Nos cenários com aumento de latência e perda de pacotes, o HTTP/3 apresentou desempenho significativamente superior. No cenário mais severo (200 ms de atraso e 5% de perda), o tempo médio do HTTP/3 foi aproximadamente **46% menor** que o observado para o HTTP/1.1.
+Os resultados mostraram que o HTTP/1.1 apresentou melhor desempenho apenas no cenário sem degradação da rede, onde o custo adicional do QUIC se tornou mais perceptível. Entretanto, nos cenários com aumento de latência e perda de pacotes, o HTTP/3 apresentou desempenho significativamente superior. No cenário mais severo, com 200 ms de atraso e 5% de perda, o tempo médio do HTTP/3 foi aproximadamente 46% menor que o observado para o HTTP/1.1.
 
-Esses resultados têm implicações diretas para o contexto hospitalar simulado neste trabalho. Em um ambiente com 50 a 100 usuários simultâneos acessando imagens médicas de alta resolução (como tomografias e ressonâncias), a superioridade do HTTP/3 nos Cenários C e D — que simulam, respectivamente, o horário de pico (100 ms, 1% de perda) e falhas de infraestrutura (200 ms, 5% de perda) — é especialmente relevante. Nesses cenários, a redução de aproximadamente **41% e 46%** no tempo de resposta representa não apenas ganho de desempenho técnico, mas potencial impacto na agilidade da tomada de decisão clínica, onde atrasos na visualização de imagens diagnósticas podem comprometer o atendimento ao paciente.
+Esses resultados têm implicações diretas para o contexto hospitalar simulado neste trabalho. Em um ambiente com 50 a 100 usuários simultâneos acessando imagens médicas de alta resolução (como tomografias e ressonâncias), a superioridade do HTTP/3 nos 
 
-### Limitações do estudo
+Cenários C e D — que simulam respectivamente o horário de pico (100 ms, 1% de perda) e falhas de infraestrutura (200 ms, 5% de perda) — é especialmente relevante. Nesses cenários, a redução de aproximadamente 41% e 46% no tempo de resposta representa não apenas ganho de desempenho técnico, mas potencial impacto na agilidade da tomada de decisão clínica, onde atrasos na visualização de imagens diagnósticas podem comprometer o atendimento ao paciente.
 
-- Experimentos realizados em ambiente local controlado, com um conjunto específico de ferramentas e configurações
-- Cenário hospitalar simulado de forma simplificada, sem emular concorrência real entre múltiplos clientes simultâneos
-- Ausência de tráfego de arquivos DICOM de grande porte ou variações de topologia de rede
+Como limitação deste estudo, destaca-se a realização dos experimentos em ambiente local controlado, utilizando apenas um conjunto específico de ferramentas e configurações. Em particular, o cenário hospitalar foi simulado de forma simplificada, sem emular concorrência real entre múltiplos clientes simultâneos, tráfego de arquivos DICOM de grande porte ou variações de topologia de rede. Estudos futuros podem ampliar a análise para ambientes distribuídos com Mininet, diferentes implementações de servidores e cargas de trabalho mais próximas da realidade hospitalar, incluindo transmissão paralela de exames de imagem por dezenas de usuários.
 
-### Trabalhos futuros
-
-- Ampliar a análise para ambientes distribuídos com **Mininet**
-- Testar diferentes implementações de servidores
-- Simular cargas de trabalho mais próximas da realidade hospitalar, incluindo transmissão paralela de exames de imagem por dezenas de usuários
-
-### Conclusão geral
-
-O HTTP/3 representa uma evolução importante em relação ao HTTP/1.1, oferecendo melhor desempenho e maior robustez em condições adversas de rede, principalmente devido às características do protocolo QUIC. No contexto hospitalar estudado, sua adoção mostra-se especialmente promissora para garantir a disponibilidade e a velocidade na transmissão de imagens médicas em situações de rede degradada, contribuindo para a continuidade e a qualidade do atendimento clínico.
+Conclui-se, portanto, que o HTTP/3 representa uma evolução importante em relação ao HTTP/1.1, oferecendo melhor desempenho e maior robustez em condições adversas de rede, principalmente devido às características do protocolo QUIC. No contexto hospitalar estudado, sua adoção mostra-se especialmente promissora para garantir a disponibilidade e a velocidade na transmissão de imagens médicas em situações de rede degradada, contribuindo para a continuidade e a qualidade do atendimento clínico.
