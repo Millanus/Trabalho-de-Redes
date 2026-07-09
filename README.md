@@ -176,6 +176,7 @@ Figura 6 — Container Caddy em execução, com a porta 443 exposta em TCP e UDP
 Figura 7 — Logs do servidor Caddy demonstrando a habilitação do HTTP/3 (QUIC) e suporte aos protocolos h1, h2 e h3
 
 
+
 <img width="1530" height="195" alt="FIGURA 8" src="https://github.com/user-attachments/assets/8e3f221f-3403-48b3-a6a8-05aeb0b63399" />
 Figura 8 — Conexão HTTP/3 estabelecida com sucesso pelo cliente experimental em Python (aioquic)
 
