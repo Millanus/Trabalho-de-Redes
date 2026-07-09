@@ -128,6 +128,9 @@ Foram desenvolvidos dois scripts independentes: um para o protocolo HTTP/1.1 (us
 
 ## 4. Evidências de Execução dos Testes
 
+<img width="737" height="54" alt="image" src="https://github.com/user-attachments/assets/e32f053b-1412-4fe0-949d-f4601f8f6e5e" />
+
+
 > As imagens/prints de terminal referenciadas abaixo (Figuras 1 a 10) fazem parte do relatório completo do trabalho.
 
 ### 4.1 Inicialização dos servidores HTTP/1.1 e HTTP/3
